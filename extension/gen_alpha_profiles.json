@@ -1,0 +1,23 @@
+{
+  "gaming_enthusiast": {
+    "primary_platform": "Roblox",
+    "content_preference": "interactive stories",
+    "purchase_influence": "high",
+    "trust_signals": ["creators", "friends", "gameplay"],
+    "engagement_hook": "playable challenges"
+  },
+  "video_native": {
+    "primary_platform": "YouTube",
+    "content_preference": "shorts & challenges",
+    "purchase_influence": "medium",
+    "trust_signals": ["creators", "humor", "authenticity"],
+    "engagement_hook": "meme-driven content"
+  },
+  "builder_creator": {
+    "primary_platform": "Minecraft",
+    "content_preference": "building tutorials",
+    "purchase_influence": "medium-high",
+    "trust_signals": ["build quality", "tutorial clarity"],
+    "engagement_hook": "building competitions"
+  }
+}

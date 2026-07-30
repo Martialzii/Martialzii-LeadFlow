@@ -1,40 +1,46 @@
-import streamlit as st
+from __future__ import annotations
+
 import google.generativeai as genai
-from fpdf import FPDF
+import streamlit as st
 
-# Configure your API Key
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
+from config import settings
 
-class SOP_PDF(FPDF):
-    def header(self):
-        self.set_font('Arial', 'B', 15)
-        self.cell(0, 10, 'Martialzii Tech Restoration Report', 0, 1, 'C')
-        self.ln(5)
 
-def generate_sop(raw_logs):
-    model = genai.GenerativeModel('gemini-pro')
+def generate_sop(raw_logs: str) -> str:
+    if not settings.gemini_api_key:
+        raise RuntimeError("Missing GEMINI_API_KEY in environment.")
+
+    genai.configure(api_key=settings.gemini_api_key)
+    model = genai.GenerativeModel("gemini-pro")
     prompt = f"""
-    Transform the following technical logs into a professional Standard Operating Procedure (SOP).
-    Structure it with:
-    1. Device Model Identification
-    2. Problem Statement
-    3. Technical Resolution Steps (Bullet points)
-    4. Optimization Performed
-    
-    Raw Logs:
-    {raw_logs}
-    """
+Transform the following technical logs into a professional Standard Operating Procedure (SOP).
+
+Use this structure:
+1. Device Model Identification
+2. Problem Statement
+3. Technical Resolution Steps
+4. Optimization Performed
+
+Raw Logs:
+{raw_logs}
+"""
     response = model.generate_content(prompt)
     return response.text
 
-# Streamlit UI
-st.title("SOP-Genie: Tech Doc Automation")
-logs = st.text_area("Paste your PowerShell/Command logs here:", height=300)
 
-if st.button("Generate Professional SOP"):
-    with st.spinner("Analyzing logs..."):
-        formatted_text = generate_sop(logs)
-        st.markdown(formatted_text)
-        
-        # Simple PDF Export logic would go here
-        st.success("SOP Generated! You can now copy this to your client report.")
+st.set_page_config(page_title="SOP Genie", page_icon="SG")
+st.title("SOP Genie")
+logs = st.text_area("Paste PowerShell or command logs here:", height=300)
+
+if st.button("Generate SOP", type="primary"):
+    if not logs.strip():
+        st.warning("Paste logs before generating an SOP.")
+    else:
+        with st.spinner("Analyzing logs..."):
+            try:
+                formatted_text = generate_sop(logs)
+            except Exception as exc:
+                st.error(str(exc))
+            else:
+                st.markdown(formatted_text)
+                st.success("SOP generated.")

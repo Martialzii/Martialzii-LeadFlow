@@ -1,20 +1,25 @@
-import psutil
+from __future__ import annotations
+
 import time
 
-def monitor_system():
-    print("🛡️ Martialzii System-Guardian is active...")
+import psutil
+
+
+def monitor_system(disk_path: str = "C:", interval_seconds: int = 60) -> None:
+    print("Martialzii System Guardian is active.")
+
     while True:
-        disk_usage = psutil.disk_usage('C:').percent
+        disk_usage = psutil.disk_usage(disk_path).percent
         cpu_usage = psutil.cpu_percent(interval=1)
-        
-        # Alert if disk usage drifts from your 2% target
-        if disk_usage > 10:
-            print(f"⚠️ ALERT: Disk usage at {disk_usage}%! Check background processes.")
-            
-        if cpu_usage > 50:
-            print(f"⚠️ ALERT: CPU spike detected: {cpu_usage}%")
-            
-        time.sleep(60) # Check every minute to keep resource usage low
+
+        if disk_usage > 90:
+            print(f"Alert: disk usage is high at {disk_usage}%.")
+
+        if cpu_usage > 80:
+            print(f"Alert: CPU usage is high at {cpu_usage}%.")
+
+        time.sleep(interval_seconds)
+
 
 if __name__ == "__main__":
     monitor_system()
